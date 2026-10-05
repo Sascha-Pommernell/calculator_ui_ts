@@ -1,0 +1,57 @@
+.group {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.legend {
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+
+.option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    user-select: none;
+}
+
+.option:has(.input:checked) {
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+
+.option:has(.input:focus-visible) {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+}
+
+.input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.symbol {
+    font-weight: 700;
+    font-size: 1.25rem;
+    width: 1.5rem;
+    text-align: center;
+    color: var(--color-accent);
+}
+
+.group:disabled .option {
+    cursor: default;
+    opacity: 0.6;
+}

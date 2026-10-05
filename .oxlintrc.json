@@ -1,0 +1,74 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "plugins": ["react", "typescript", "unicorn", "import", "oxc"],
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }],
+    "react/react-in-jsx-scope": "off",
+    "import/no-unassigned-import": ["warn", { "allow": ["**/*.css", "@testing-library/jest-dom/vitest"] }],
+    "import/no-cycle": "error"
+  },
+  "ignorePatterns": ["dist/**", "node_modules/**"],
+  "overrides": [
+    {
+      "files": ["src/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/features/*/**", "!@/features/*/index.ts"],
+                "message": "Import features only through their public index (@/features/<name>/index.ts)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/components/**", "src/lib/**", "src/config/**", "src/types/**", "src/hooks/**", "src/utils/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/features", "@/features/**"],
+                "message": "Shared layers must not depend on features."
+              },
+              {
+                "group": ["@/app", "@/app/**"],
+                "message": "Shared layers must not depend on the app layer."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/features", "@/features/**"],
+                "message": "Use relative imports inside a feature. Features must not import other features; compose them in the app layer instead."
+              },
+              {
+                "group": ["@/app", "@/app/**"],
+                "message": "Features must not depend on the app layer."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

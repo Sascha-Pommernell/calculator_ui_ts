@@ -1,0 +1,35 @@
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.label {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.input {
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    color: var(--color-text);
+    min-width: 0;
+}
+
+.input[aria-invalid="true"] {
+    border-color: var(--color-error);
+}
+
+.input:disabled {
+    opacity: 0.6;
+}
+
+.error {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--color-error);
+}

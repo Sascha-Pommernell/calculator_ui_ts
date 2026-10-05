@@ -1,0 +1,44 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.heading {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.25;
+}
+
+.list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.625rem 1rem;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+.item + .item {
+    border-top: 1px solid var(--color-border);
+}
+
+.expression {
+    color: var(--color-text-muted);
+}
+
+.result {
+    font-weight: 600;
+    text-align: right;
+}

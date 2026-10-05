@@ -1,0 +1,27 @@
+.status {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+.dot {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.status[data-status="checking"] .dot {
+    color: var(--color-warning);
+}
+
+.status[data-status="online"] .dot {
+    color: var(--color-success);
+}
+
+.status[data-status="offline"] .dot {
+    color: var(--color-error);
+}
