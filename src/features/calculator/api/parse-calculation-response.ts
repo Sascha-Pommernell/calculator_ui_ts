@@ -1,12 +1,11 @@
 import { z } from "zod";
 import { InvalidResponseError } from "@/lib/api-client.ts";
-import { OPERATIONS } from "../types/index.ts";
+import { MIN_OPERANDS, OPERATIONS } from "../types/index.ts";
 import type { CalculationResult } from "../types/index.ts";
 
 const CalculationResponseSchema = z.object({
     operation: z.enum(OPERATIONS),
-    a: z.number(),
-    b: z.number(),
+    numbers: z.array(z.number()).min(MIN_OPERANDS),
     result: z.number(),
 });
 
@@ -31,8 +30,8 @@ export function parseCalculationResponse(text: string): CalculationResult {
     const parsed = CalculationResponseSchema.safeParse(json);
     if (!parsed.success) throw new InvalidResponseError();
 
-    const { operation, a, b, result } = parsed.data;
+    const { operation, numbers, result } = parsed.data;
     const exact = RESULT_LITERAL.exec(text)?.[1];
 
-    return { operation, a, b, result: exact ?? String(result) };
+    return { operation, numbers, result: exact ?? String(result) };
 }

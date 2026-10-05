@@ -5,12 +5,12 @@ import type { CalculationInput, CalculationResult } from "../types/index.ts";
 import { parseCalculationResponse } from "./parse-calculation-response.ts";
 
 export async function calculate(
-    { operation, a, b }: CalculationInput,
+    { operation, numbers }: CalculationInput,
     signal?: AbortSignal,
 ): Promise<CalculationResult> {
     const response = await apiClient.request(`/api/calculate/${operation}`, {
         method: "POST",
-        body: { a, b },
+        body: { numbers },
         signal,
     });
     return parseCalculationResponse(await response.text());

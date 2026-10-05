@@ -4,15 +4,18 @@ import { env } from "@/config/env.ts";
 
 /**
  * Request handlers that emulate calculator_api_ts, including its decimal semantics
- * (29 significant digits, 28 decimal places, round half up) and hand-built JSON so
- * that the exact result literal reaches the client.
+ * (29 significant digits, 28 decimal places, round half up), the variadic
+ * `{ numbers: [...] }` contract and hand-built JSON so that the exact result literal
+ * reaches the client.
  */
 
 const CalcDecimal = Decimal.clone({ precision: 29, rounding: Decimal.ROUND_HALF_UP, toExpPos: 29 });
 const DECIMAL_MAX_ABS = new CalcDecimal("79228162514264337593543950335");
 const DECIMAL_MAX_SCALE = 28;
+const MIN_OPERANDS = 2;
 
-export const VALIDATION_ERROR = "Body must contain finite numbers a and b within the decimal range";
+export const VALIDATION_ERROR =
+    "Body must contain an array numbers with at least two finite numbers within the decimal range";
 export const DIVISION_BY_ZERO_ERROR = "Division by zero is not allowed";
 export const OVERFLOW_ERROR = "Arithmetic overflow: result exceeds the decimal range";
 
@@ -55,19 +58,24 @@ export const handlers = [
         if (typeof body !== "object" || body === null || Array.isArray(body)) {
             return errorResponse(VALIDATION_ERROR, 400);
         }
-        const { a, b } = body as Record<string, unknown>;
-        if (!isDecimalNumber(a) || !isDecimalNumber(b)) return errorResponse(VALIDATION_ERROR, 400);
+        const { numbers } = body as Record<string, unknown>;
+        if (!Array.isArray(numbers) || numbers.length < MIN_OPERANDS || !numbers.every(isDecimalNumber)) {
+            return errorResponse(VALIDATION_ERROR, 400);
+        }
 
-        const divisor = new CalcDecimal(b);
-        if (operation === "divide" && divisor.isZero()) return errorResponse(DIVISION_BY_ZERO_ERROR, 400);
+        const [first, ...rest] = numbers as [number, ...number[]];
+        let accumulator = new CalcDecimal(first);
+        for (const value of rest) {
+            const operand = new CalcDecimal(value);
+            if (operation === "divide" && operand.isZero()) return errorResponse(DIVISION_BY_ZERO_ERROR, 400);
+            accumulator = op(accumulator, operand);
+            if (!isInRange(accumulator)) return errorResponse(OVERFLOW_ERROR, 400);
+            accumulator = accumulator.toDecimalPlaces(DECIMAL_MAX_SCALE);
+        }
 
-        const raw = op(new CalcDecimal(a), divisor);
-        if (!isInRange(raw)) return errorResponse(OVERFLOW_ERROR, 400);
-        const result = raw.toDecimalPlaces(DECIMAL_MAX_SCALE);
-
-        return new HttpResponse(`{"operation":"${operation}","a":${a},"b":${b},"result":${result.toString()}}`, {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-        });
+        return new HttpResponse(
+            `{"operation":"${operation}","numbers":${JSON.stringify(numbers)},"result":${accumulator.toString()}}`,
+            { status: 200, headers: { "Content-Type": "application/json" } },
+        );
     }),
 ];

@@ -16,9 +16,12 @@ export const OPERATION_META: Readonly<Record<Operation, OperationMeta>> = {
 
 export interface CalculationInput {
     operation: Operation;
-    a: number;
-    b: number;
+    /** At least MIN_OPERANDS operands, evaluated left-associatively by the API. */
+    numbers: number[];
 }
+
+/** The API requires at least two operands. */
+export const MIN_OPERANDS = 2;
 
 export interface CalculationResult extends CalculationInput {
     /**

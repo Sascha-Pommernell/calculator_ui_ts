@@ -10,7 +10,43 @@
 }
 
 .operands {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.legend {
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+
+.operandList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
     gap: 1rem;
+}
+
+.operandRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.operandRow > :first-child {
+    flex: 1;
+}
+
+.removeButton {
+    /* align with the input, below the label */
+    margin-top: 1.625rem;
+    white-space: nowrap;
 }

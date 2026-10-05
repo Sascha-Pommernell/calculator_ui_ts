@@ -5,3 +5,4 @@
 export { Calculator } from "./components/Calculator.tsx";
 export { ApiStatus } from "./components/ApiStatus.tsx";
 export type { CalculationInput, CalculationResult, Operation } from "./types/index.ts";
+export { MIN_OPERANDS } from "./types/index.ts";

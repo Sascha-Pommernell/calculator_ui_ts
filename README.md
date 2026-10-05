@@ -1,8 +1,11 @@
 # calculator_ui_ts
 
 React-Oberfläche für die [calculator_api_ts](https://github.com/Sascha-Pommernell/calculator_api_ts).
-Die UI sendet zwei Operanden an `POST /api/calculate/{add|subtract|multiply|divide}` und zeigt das
-Ergebnis **exakt** so an, wie die API es liefert (bis zu 28 Nachkommastellen, z. B. `1 ÷ 3`).
+Die UI sendet **zwei oder mehr Operanden** als `{ "numbers": [n1, n2, …] }` an
+`POST /api/calculate/{add|subtract|multiply|divide}` (links-assoziativ ausgewertet, z. B. `10 − 4 − 3 = 3`)
+und zeigt das Ergebnis **exakt** so an, wie die API es liefert (bis zu 28 Nachkommastellen, z. B. `1 ÷ 3`).
+Eingabefelder können über „Zahl hinzufügen“ ergänzt und – solange mehr als zwei vorhanden sind – wieder
+entfernt werden.
 
 Das Projekt ist bewusst so aufgebaut, dass die Architektur unverändert für große Anwendungen
 weiterverwendet werden kann (Feature-basiert nach dem Vorbild von
@@ -150,8 +153,12 @@ Soll ein Feature Daten eines anderen nutzen, wird das in der `app`-Schicht kompo
 - **Realistische Tests mit MSW:** Statt `fetch` zu mocken, emulieren die Handler in
   [tests/mocks/handlers.ts](./tests/mocks/handlers.ts) die API inklusive Dezimal-Semantik
   (`decimal.js`, 29 signifikante Stellen). Unbehandelte Requests schlagen fehl.
-- **Validierung zweistufig:** Clientseitig nur das Nötigste (leer, keine Zahl, unendlich); die API
-  bleibt die Quelle der Wahrheit (Wertebereich, Division durch null, Überlauf).
+- **Validierung zweistufig:** Clientseitig nur das Nötigste (leer, keine Zahl, unendlich) – für jedes
+  Eingabefeld einzeln; die API bleibt die Quelle der Wahrheit (Wertebereich, Division durch null, Überlauf,
+  Mindestanzahl von zwei Operanden).
+- **Dynamische Operandenliste:** Die Felder werden über stabile IDs (nicht über den Index) verwaltet, damit
+  das Entfernen eines mittleren Feldes die Werte der übrigen Felder nicht verschiebt; die Mindestanzahl
+  (`MIN_OPERANDS = 2`) ist im Feature-Typ zentral definiert.
 - **Barrierefreiheit:** Label/Input-Verknüpfung, `aria-invalid` + `aria-describedby` für Feldfehler,
   `aria-live` für das Ergebnis, `role="status"` für den API-Status, sichtbarer Fokus, Dark Mode via
   `prefers-color-scheme`.
